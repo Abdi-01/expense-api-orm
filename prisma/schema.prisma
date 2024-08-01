@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int     @id @unique(map: "id") @default(autoincrement())
+  email    String  @unique(map: "email")
+  noTelp   String? @unique(map: "noTelp")
+  password String  @db.VarChar(350)
+  Track    Track[]
+}
+
+model Track {
+  id         Int      @id @unique(map: "id") @default(autoincrement())
+  label      String
+  type       Type
+  nominal    Int
+  date       DateTime @db.DateTime(0)
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model Category {
+  id           Int     @id @unique(map: "id") @default(autoincrement())
+  categoryName String
+  Track        Track[]
+}
+
+enum Type {
+  INCOME
+  EXPENSE
+}
