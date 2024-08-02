@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { AuthController } from "../controllers/auth.controller";
+import { verify } from "jsonwebtoken";
 
 export class AuthRouter {
   // define private methode
@@ -21,7 +22,26 @@ export class AuthRouter {
     this.route.patch(
       "/update-contact",
       (req: Request, res: Response, next: NextFunction) => {
-        console.log("GET TOKEN FROM REQ :", req.header("Authorization"));
+        try {
+          // Proses read token dari request header
+          const token = req.header("Authorization")?.split(" ")[1];
+          console.log("THIS IS TOKEN", token);
+          if (!token) {
+            throw { rc: 404, message: "Token not exist" };
+          }
+
+          // Proses penerjemahan token menjadi data asalnya
+          const checkToken = verify(
+            token,
+            process.env.TOKEN_KEY || "secretKey"
+          );
+
+          console.log(checkToken);
+          res.locals.decript = checkToken;
+          next();
+        } catch (error) {
+          next(error);
+        }
       },
       this.authController.updateContact
     );

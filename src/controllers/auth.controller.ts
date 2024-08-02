@@ -104,14 +104,25 @@ export class AuthController {
 
   async updateContact(req: Request, res: Response, next: NextFunction) {
     try {
-      // const updatePhone = await prisma.user.update({
-      //   data: {
-      //     noTelp: req.body.noTelp,
-      //   },
-      //   where:{
-      //     // id
-      //   }
-      // });
+      console.log("RES DECRIPT TOKEN", res.locals.decript);
+
+      if (res.locals.decript.id) {
+        const updatePhone = await prisma.user.update({
+          data: {
+            noTelp: req.body.noTelp,
+          },
+          where: {
+            id: res.locals.decript.id,
+          },
+        });
+
+        return res.status(200).send({
+          success: true,
+          result: updatePhone,
+        });
+      }
+
+      throw { rc: 401, message: "Update unauthorize" };
     } catch (error) {
       next(error);
     }
