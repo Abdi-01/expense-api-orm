@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
-import express, { Express, Request, Response } from "express";
+import express, { Express, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import { PrismaClient } from "@prisma/client";
 import { UserRouter } from "./routers/user.router";
@@ -14,6 +14,7 @@ class App {
     this.app = express();
     this.configure();
     this.routes();
+    this.handleError();
   }
 
   //   configure methode
@@ -31,6 +32,21 @@ class App {
     // define route
     const userRouter = new UserRouter();
     this.app.use("/auth", userRouter.getRoute());
+  }
+
+  // define error handling middleware
+  private handleError(): void {
+    this.app.use(
+      (error: any, req: Request, res: Response, next: NextFunction) => {
+        console.log(error);
+
+        const statusCode = error.rc || 500;
+        return res.status(statusCode).send({
+          success: false,
+          error,
+        });
+      }
+    );
   }
 
   public async start(): Promise<void> {

@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import prisma from "../prisma";
 import { hashPassword } from "../utils/hash";
 import { compareSync } from "bcrypt";
@@ -11,8 +11,10 @@ interface IUser {
 
 export class UserController {
   // define your methode controller below
-  async regis(req: Request, res: Response) {
+  async regis(req: Request, res: Response, next: NextFunction) {
     try {
+      console.log(req.body);
+
       await prisma.user.create({
         data: {
           email: req.body.email,
@@ -26,7 +28,7 @@ export class UserController {
       });
     } catch (error) {
       console.log(error);
-      return res.status(500).send({
+      next({
         success: false,
         message: "FAILED create account",
         error,
@@ -34,7 +36,7 @@ export class UserController {
     }
   }
 
-  async login(req: Request, res: Response) {
+  async login(req: Request, res: Response, next: NextFunction) {
     try {
       const findUser = await prisma.user.findUnique({
         where: { email: req.body.email },
@@ -63,11 +65,7 @@ export class UserController {
         };
       }
     } catch (error: any) {
-      console.log(error);
-      return res.status(error.rc || 500).send({
-        success: false,
-        message: error.message,
-      });
+      next(error);
     }
   }
 }
