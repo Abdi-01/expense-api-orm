@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import prisma from "../prisma";
 import { hashPassword } from "../utils/hash";
 import { compareSync } from "bcrypt";
+import { createToken } from "../utils/jwt";
 
 interface IUser {
   email: string;
@@ -9,7 +10,7 @@ interface IUser {
   password: string;
 }
 
-export class UserController {
+export class AuthController {
   // define your methode controller below
   async regis(req: Request, res: Response, next: NextFunction) {
     try {
@@ -56,6 +57,10 @@ export class UserController {
           result: {
             email: findUser.email,
             noTelp: findUser.noTelp,
+            token: createToken(
+              { id: findUser.id, email: findUser.email },
+              "24h"
+            ),
           },
         });
       } else {
@@ -65,6 +70,49 @@ export class UserController {
         };
       }
     } catch (error: any) {
+      next(error);
+    }
+  }
+
+  async keepLogin(req: Request, res: Response, next: NextFunction) {
+    try {
+      const findUser = await prisma.user.findUnique({
+        where: {
+          email: req.params.email,
+        },
+      });
+
+      if (findUser) {
+        return res.status(200).send({
+          success: true,
+          result: {
+            email: findUser?.email,
+            noTelp: findUser?.noTelp,
+            token: createToken(
+              { id: findUser.id, email: findUser.email },
+              "24h"
+            ),
+          },
+        });
+      } else {
+        throw { rc: 401, message: "Account unauthorized" };
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updateContact(req: Request, res: Response, next: NextFunction) {
+    try {
+      // const updatePhone = await prisma.user.update({
+      //   data: {
+      //     noTelp: req.body.noTelp,
+      //   },
+      //   where:{
+      //     // id
+      //   }
+      // });
+    } catch (error) {
       next(error);
     }
   }

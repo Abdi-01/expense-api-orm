@@ -3,7 +3,7 @@ dotenv.config();
 import express, { Express, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import { PrismaClient } from "@prisma/client";
-import { UserRouter } from "./routers/user.router";
+import { AuthRouter } from "./routers/auth.router";
 
 const PORT = process.env.PORT;
 
@@ -30,8 +30,8 @@ class App {
     });
 
     // define route
-    const userRouter = new UserRouter();
-    this.app.use("/auth", userRouter.getRoute());
+    const authRouter = new AuthRouter();
+    this.app.use("/auth", authRouter.getRoute());
   }
 
   // define error handling middleware
