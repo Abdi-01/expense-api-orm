@@ -46,10 +46,29 @@ export class AuthController {
       if (findUser) {
         const comparePass = compareSync(req.body.password, findUser.password);
         if (!comparePass) {
-          throw {
-            rc: 401,
-            message: "Your password is wrong",
-          };
+          if (
+            findUser.limitWrongPassword <
+            Number(process.env.MAX_FORGOT_PASSWORD)
+          ) {
+            let countLimit = findUser.limitWrongPassword + 1;
+            await prisma.user.update({
+              where: { id: findUser?.id },
+              data: {
+                limitWrongPassword: countLimit,
+              },
+            });
+            throw {
+              rc: 400,
+              success: false,
+              message: `Password is wrong. ${countLimit}/${process.env.MAX_FORGOT_PASSWORD}`,
+            };
+          } else {
+            throw {
+              rc: 400,
+              success: false,
+              message: `Your account is Suspend, contact Admin`,
+            };
+          }
         }
 
         return res.status(200).send({

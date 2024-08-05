@@ -8,11 +8,13 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @unique(map: "id") @default(autoincrement())
-  email    String  @unique(map: "email")
-  noTelp   String? @unique(map: "noTelp")
-  password String  @db.VarChar(350)
-  Track    Track[]
+  id                 Int     @id @unique(map: "id") @default(autoincrement())
+  email              String  @unique(map: "email")
+  noTelp             String? @unique(map: "noTelp")
+  password           String  @db.VarChar(350)
+  isBlocked          Boolean @default(false)
+  limitWrongPassword Int     @default(0)
+  Track              Track[]
 }
 
 model Track {
