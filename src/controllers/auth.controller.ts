@@ -97,7 +97,7 @@ export class AuthController {
     try {
       const findUser = await prisma.user.findUnique({
         where: {
-          email: req.params.email,
+          id: res.locals.decript.id,
         },
       });
 
