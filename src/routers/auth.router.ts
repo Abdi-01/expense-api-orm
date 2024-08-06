@@ -2,6 +2,7 @@ import { NextFunction, Request, Response, Router } from "express";
 import { AuthController } from "../controllers/auth.controller";
 import { verify } from "jsonwebtoken";
 import { verifyToken } from "../middleware/verifyToken";
+import { regisValidation } from "../middleware/validator/regis";
 
 export class AuthRouter {
   // define private methode
@@ -16,7 +17,7 @@ export class AuthRouter {
 
   // private methode for initialize routing to controller
   private initializeRoutes(): void {
-    this.route.post("/regis", this.authController.regis);
+    this.route.post("/regis", regisValidation, this.authController.regis);
     this.route.post("/login", this.authController.login);
     this.route.get("/keeplogin", verifyToken, this.authController.keepLogin);
 

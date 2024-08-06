@@ -3,6 +3,7 @@ import prisma from "../prisma";
 import { hashPassword } from "../utils/hash";
 import { compareSync } from "bcrypt";
 import { createToken } from "../utils/jwt";
+import { sendEmail } from "../utils/emailSender";
 
 interface IUser {
   email: string;
@@ -22,6 +23,12 @@ export class AuthController {
           password: await hashPassword(req.body.password),
         },
       });
+
+      await sendEmail(
+        req.body.email,
+        "Regster Account",
+        `<h1>Welcome, ${req.body.email}.</h1><br/><p>Your account is created</p>`
+      );
 
       return res.status(201).send({
         success: true,
