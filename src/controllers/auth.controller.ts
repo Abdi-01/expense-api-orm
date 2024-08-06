@@ -24,11 +24,10 @@ export class AuthController {
         },
       });
 
-      await sendEmail(
-        req.body.email,
-        "Regster Account",
-        `<h1>Welcome, ${req.body.email}.</h1><br/><p>Your account is created</p>`
-      );
+      await sendEmail(req.body.email, "Regster Account", null, {
+        email: req.body.email,
+        otp: "7654",
+      });
 
       return res.status(201).send({
         success: true,
