@@ -152,4 +152,14 @@ export class AuthController {
       next(error);
     }
   }
+
+  async updateImgProfile(req: Request, res: Response, next: NextFunction) {
+    try {
+      console.log("LOG FROM FILE CONTROLLER");
+
+      console.log("FILE UPLOAD INFO :", req.file);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

@@ -14,6 +14,7 @@ model User {
   password           String  @db.VarChar(350)
   isBlocked          Boolean @default(false)
   limitWrongPassword Int     @default(0)
+  imgProfile         String?
   Track              Track[]
 }
 

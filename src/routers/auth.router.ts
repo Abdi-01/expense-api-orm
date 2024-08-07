@@ -3,6 +3,7 @@ import { AuthController } from "../controllers/auth.controller";
 import { verify } from "jsonwebtoken";
 import { verifyToken } from "../middleware/verifyToken";
 import { regisValidation } from "../middleware/validator/regis";
+import { uploader } from "../middleware/uploader";
 
 export class AuthRouter {
   // define private methode
@@ -25,6 +26,13 @@ export class AuthRouter {
       "/update-contact",
       verifyToken,
       this.authController.updateContact
+    );
+
+    this.route.patch(
+      "/img-profile",
+      verifyToken,
+      uploader().single("img"),
+      this.authController.updateImgProfile
     );
   }
 
