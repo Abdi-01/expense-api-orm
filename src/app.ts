@@ -2,8 +2,8 @@ import dotenv from "dotenv";
 dotenv.config();
 import express, { Express, NextFunction, Request, Response } from "express";
 import cors from "cors";
-import { PrismaClient } from "@prisma/client";
 import { AuthRouter } from "./routers/auth.router";
+import path from "path";
 
 const PORT = process.env.PORT;
 
@@ -21,6 +21,7 @@ class App {
   private configure(): void {
     this.app.use(cors());
     this.app.use(express.json());
+    this.app.use("/assets", express.static(path.join(__dirname, "../public")));
   }
 
   //   To define routes or controllers config api

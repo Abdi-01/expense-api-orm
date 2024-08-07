@@ -158,6 +158,20 @@ export class AuthController {
       console.log("LOG FROM FILE CONTROLLER");
 
       console.log("FILE UPLOAD INFO :", req.file);
+      if (res.locals.decript.id) {
+        await prisma.user.update({
+          data: {
+            imgProfile: `/assets/${req.file?.filename}`,
+          },
+          where: {
+            id: res.locals.decript.id,
+          },
+        });
+      }
+      return res.status(200).send({
+        success: true,
+        message: `Update img profile success`,
+      });
     } catch (error) {
       next(error);
     }
