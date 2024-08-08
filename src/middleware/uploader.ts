@@ -2,7 +2,7 @@ import multer from "multer";
 import path from "path";
 import { Request } from "express";
 
-export const uploader = () => {
+export const uploader = (dirName?: string | null, prefixName?: string) => {
   // define main directory path/location
   const mainDir = path.join(__dirname, "../../public");
   console.log("LOG FROM FILE UPLOADER.TS FILE");
@@ -14,7 +14,8 @@ export const uploader = () => {
       callback: (error: Error | null, destination: string) => void
     ) => {
       console.log("Destination file :", mainDir);
-      callback(null, mainDir);
+      const fileDestination = dirName ? mainDir + dirName : mainDir;
+      callback(null, fileDestination);
     },
     filename: (
       req: Request,
@@ -29,7 +30,7 @@ export const uploader = () => {
       console.log(extention);
 
       //   define rename filename
-      callback(null, `IMG${Date.now()}.${extention}`);
+      callback(null, `${prefixName || "MEDIA"}${Date.now()}.${extention}`);
     },
   });
 

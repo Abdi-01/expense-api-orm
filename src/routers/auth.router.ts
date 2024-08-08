@@ -31,7 +31,7 @@ export class AuthRouter {
     this.route.patch(
       "/img-profile",
       verifyToken,
-      uploader().single("img"),
+      uploader("/profile", "PRF").single("img"),
       this.authController.updateImgProfile
     );
   }

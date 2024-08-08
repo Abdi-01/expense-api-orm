@@ -4,6 +4,7 @@ import { hashPassword } from "../utils/hash";
 import { compareSync } from "bcrypt";
 import { createToken } from "../utils/jwt";
 import { sendEmail } from "../utils/emailSender";
+import { createUser, findUniqueUser } from "../services/user.service";
 
 interface IUser {
   email: string;
@@ -15,14 +16,7 @@ export class AuthController {
   // define your methode controller below
   async regis(req: Request, res: Response, next: NextFunction) {
     try {
-      console.log(req.body);
-
-      await prisma.user.create({
-        data: {
-          email: req.body.email,
-          password: await hashPassword(req.body.password),
-        },
-      });
+      await createUser(req.body);
 
       await sendEmail(req.body.email, "Regster Account", null, {
         email: req.body.email,
@@ -45,8 +39,8 @@ export class AuthController {
 
   async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const findUser = await prisma.user.findUnique({
-        where: { email: req.body.email },
+      const findUser: any = await findUniqueUser({
+        email: req.body.email,
       });
 
       if (findUser) {
