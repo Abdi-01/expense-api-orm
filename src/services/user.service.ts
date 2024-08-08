@@ -26,7 +26,7 @@ export const findUniqueUser = async (data: any) => {
       where: data,
     });
 
-    return { success: true, user };
+    return { success: true, data: user };
   } catch (error) {
     return error;
   }
@@ -34,30 +34,40 @@ export const findUniqueUser = async (data: any) => {
 
 export const checkPassword = async (reqPass: string, dataUser: any) => {
   try {
-    const comparePass = compareSync(reqPass, dataUser.password);
+    const { id, password, limitWrongPassword } = dataUser;
+    const comparePass = compareSync(reqPass, password);
     if (!comparePass) {
-      if (
-        dataUser.limitWrongPassword < Number(process.env.MAX_FORGOT_PASSWORD)
-      ) {
-        await prisma.user.update({
-          where: { id: dataUser.id },
-          data: { limitWrongPassword: dataUser.limitWrongPassword + 1 },
+      if (limitWrongPassword < Number(process.env.MAX_FORGOT_PASSWORD)) {
+        await updateUser(id, {
+          limitWrongPassword: limitWrongPassword + 1,
         });
-        return {
+        throw {
           success: false,
-          message: `Password is wrong ${dataUser.limitWrongPassword + 1}/${
+          message: `Password is wrong ${limitWrongPassword + 1}/${
             process.env.MAX_FORGOT_PASSWORD
           }`,
         };
       } else {
-        return {
+        throw {
           success: false,
           message: `Your account is blocked`,
         };
       }
     } else {
+      await updateUser(id, {
+        limitWrongPassword: 0,
+      });
       return { success: true };
     }
+  } catch (error) {
+    return error;
+  }
+};
+
+export const updateUser = async (id: number, newData: any) => {
+  try {
+    await prisma.user.update({ where: { id }, data: newData });
+    return { success: true };
   } catch (error) {
     return error;
   }
