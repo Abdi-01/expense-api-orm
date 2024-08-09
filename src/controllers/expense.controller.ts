@@ -4,7 +4,14 @@ import prisma from "../prisma";
 export class ExpenseController {
   async getDataExpense(req: Request, res: Response, next: NextFunction) {
     try {
-      const data = await prisma.track.findMany();
+      const data = await prisma.track.findMany({
+        include: {
+          user: true,
+        },
+        where: {
+          userId: res.locals.decript.id,
+        },
+      });
 
       return res.status(200).send({
         success: true,

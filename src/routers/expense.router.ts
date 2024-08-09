@@ -16,7 +16,7 @@ export class ExpenseRouter {
 
   // private methode for initialize routing to controller
   private initializeRoutes(): void {
-    this.route.get("/", this.expenseController.getDataExpense);
+    this.route.get("/", verifyToken, this.expenseController.getDataExpense);
   }
 
   // public methode for expose route methode
