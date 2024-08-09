@@ -4,6 +4,8 @@ import express, { Express, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import { AuthRouter } from "./routers/auth.router";
 import path from "path";
+import { redisClient } from "./utils/redisClient";
+import { ExpenseRouter } from "./routers/expense.router";
 
 const PORT = process.env.PORT;
 
@@ -32,7 +34,9 @@ class App {
 
     // define route
     const authRouter = new AuthRouter();
+    const expenseRouter = new ExpenseRouter();
     this.app.use("/auth", authRouter.getRoute());
+    this.app.use("/expense", expenseRouter.getRoute());
   }
 
   // define error handling middleware
@@ -51,6 +55,7 @@ class App {
   }
 
   public async start(): Promise<void> {
+    await redisClient.connect(); // connect to redis
     this.app.listen(PORT, () =>
       console.log(
         `PRISMA API for EXPENSE APP RUNNING : http://localhost:${PORT}`

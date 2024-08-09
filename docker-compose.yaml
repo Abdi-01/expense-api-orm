@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: expense-api:1.0
+    ports:
+      - "2500:2400"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run dev
