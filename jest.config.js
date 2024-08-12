@@ -1,7 +1,9 @@
-/** @type {import('ts-jest').JestConfigWithTsJest} **/
+/** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
+  preset: "ts-jest",
   testEnvironment: "node",
-  transform: {
-    "^.+.tsx?$": ["ts-jest",{}],
+  setupFilesAfterEnv: ["<rootDir>/src/setup_test/client.ts"],
+  moduleNameMapper: {
+    "^@/(.*)$": "<rootDir>/$1",
   },
 };
