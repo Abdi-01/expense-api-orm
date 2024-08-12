@@ -1,5 +1,5 @@
-import { getUser } from "../../src/setup_test/function";
-import { prismaMock } from "../../src/setup_test/singleton";
+import { getUser } from "../../setup_test/function";
+import { prismaMock } from "../../setup_test/singleton";
 
 test("Should return an array from get data users", async () => {
   prismaMock.user.findFirst.mockResolvedValueOnce({
